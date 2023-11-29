@@ -168,28 +168,33 @@ def getMicroTaskSpecificKeyPressCount(userLogDict):
 
 
 for filename in listPathFileResults:
-    # !!!BEGINS HERE!!! code starts here to fetch each crowd worker results file and then normalize the data towards a single file. The code has two versions that are similar: process files from microtasks in design "with personalization" (task design wit easier difficulty) or "without personalization" (task design with normal difficulty)
+    # code starts here to fetch each crowd worker results file and then normalize the data towards a single file.
     df = pd.read_json(filename)
     now = datetime.now()
     date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
     df.to_csv(r'export_dataframe_workshop_' + date_time + '.csv', sep=";", index=False, header=True)
-
     file = open(filename, "r", encoding="utf8")
 
     userLogDict = refactorUserLog_UnfilteredJSON_TO_FilteredDict(file.read())
+    clickTaskFingerprintingDict = None
     clickTaskFingerprintingDict = getMicroTaskSpecificClickDetailsCount(userLogDict)
+    keyTaskFingerprintingDict = None
     keyTaskFingerprintingDict = getMicroTaskSpecificClickDetailsCount(userLogDict)
 
-with open('resultsTaskFingerprintingClickDetails.csv', 'w', newline='') as outputfile:
-    if clickTaskFingerprintingDict is not None:
-        keys = clickTaskFingerprintingDict.keys()
-        dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
-        dict_writer.writeheader()
-        dict_writer.writerows(clickTaskFingerprintingDict)
+    with open(r'resultsTaskFingerprintingClickDetails'+datetime+'.csv', 'w', newline='') as outputfile:
+        # saves the results of the click details in a csv file
+        if clickTaskFingerprintingDict is not None:
+            keys = clickTaskFingerprintingDict.keys()
+            dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
+            dict_writer.writeheader()
+            dict_writer.writerows(clickTaskFingerprintingDict)
 
-with open('resultsTaskFingerprintingKeyDetails.csv', 'w', newline='') as outputfile:
-    if keyTaskFingerprintingDict is not None:
-        keys = keyTaskFingerprintingDict.keys()
-        dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
-        dict_writer.writeheader()
-        dict_writer.writerows(clickTaskFingerprintingDict)
+    with open(r'resultsTaskFingerprintingKeyDetails'+datetime+'.csv', 'w', newline='') as outputfile:
+        # saves the results of the key details in a csv file
+        if keyTaskFingerprintingDict is not None:
+            keys = keyTaskFingerprintingDict.keys()
+            dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
+            dict_writer.writeheader()
+            dict_writer.writerows(clickTaskFingerprintingDict)
+
+
