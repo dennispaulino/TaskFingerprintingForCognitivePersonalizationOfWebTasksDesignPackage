@@ -1,170 +1,104 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import StandardScaler
-# To remove the scientific notation from numpy arrays
-np.set_printoptions(suppress=True)
-
-def preparationDatasetTaskFingerprinting():
-    """Prepare the data from the csv file which was obtained from the task fingeprinting technique, to subsequently be used for the development of a deep learning model."""
-    #TODO the inputs will be based on the csv files: one for the target variables and another one for the predictors
-    # from the user input, it must be indicated the file with the task fingerprinting data, to be then processed in this script the deep learning model
-    data=pd.read_csv("", sep=';')
-    data.head()
-
-    #convert all NaN to -1
-    data = data.fillna(-1)
-    data.head()
-
-    #from the user input, it will be assigned the target variables (usually related with the accuracy metrics to predict) and the predictors (usually related with the independent variables)
-    TargetVariable=[]
-    Predictors=[]
-
-    X=data[Predictors].values
-    y=data[TargetVariable].values
-
-    ### Standardization of data ###
-
-    PredictorScaler=StandardScaler()
-    TargetVarScaler=StandardScaler()
-
-    # Storing the fit object for later reference
-    PredictorScalerFit=PredictorScaler.fit(X)
-    TargetVarScalerFit=TargetVarScaler.fit(y)
-
-    # Generating the standardized values of X and y
-    X=PredictorScalerFit.transform(X)
-    y=TargetVarScalerFit.transform(y)
-    return {"stdValuesX":X, "stdValuesY": y}
-
-# Split the data into training and testing set
+from sklearn.preprocessing import StandardScaler, Normalizer
 from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
-
-#normalize all sets
-from sklearn.preprocessing import Normalizer
-norm = Normalizer()
-X_train = norm.fit_transform(X_train)
-X_test = norm.fit_transform(X_test)
-y_train = norm.fit_transform(y_train)
-y_test = norm.fit_transform(y_test)
-"""
-#print normalized data
-print(X_train)
-print(y_train)
-print(X_test)
-print(y_test)
-"""
-
-# Quick sanity check with the shapes of Training and testing datasets
-print(X_train.shape)
-print(y_train.shape)
-print(X_test.shape)
-print(y_test.shape)
-
-# importing the libraries
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation
-
-# create ANN model
-model = Sequential()
-
-# Defining the Input layer and FIRST hidden layer, both are same!
-model.add(Dense(units=256, input_dim=105, kernel_initializer='normal', activation='relu'))
-
-# Defining the Second layer of the model
-# after the first layer we don't have to specify input_dim as keras configure it automatically
-model.add(Dropout(0.15))
-model.add(Dense(units=128, kernel_initializer='normal', activation='tanh'))
-model.add(Dropout(0.15))
-model.add(Dense(units=64, kernel_initializer='normal', activation='tanh'))
-model.add(Dropout(0.15))
-model.add(Dense(units=32, kernel_initializer='normal', activation='tanh'))
-model.add(Dropout(0.15))
-model.add(Dense(units=16, kernel_initializer='normal', activation='tanh'))
-model.add(Dropout(0.15))
-model.add(Dense(units=8, kernel_initializer='normal', activation='tanh'))
-
-# The output neuron is a single fully connected node
-# Since we will be predicting a single number
-model.add(Dense(4, kernel_initializer='normal'))
-
-# Compiling the model
-model.compile(loss='mean_squared_error', optimizer='adam')
-
-# Fitting the ANN to the Training set
-model.fit(X_train, y_train ,batch_size = 20, epochs = 700, verbose=1)
-
-model.summary()
-model.save('modelo.h5')
-
+from keras.layers import Dense, Dropout
 from keras_sequential_ascii import keras2ascii
-keras2ascii(model)
 import tensorflow as tf
 
-tf.keras.utils.plot_model(
-    model,
-    to_file="model.png",
-    show_shapes=True,
-    show_dtype=False,
-    show_layer_names=True,
-    rankdir="TB",
-    expand_nested=False,
-    dpi=96,
-    layer_range=None,
-    show_layer_activations=True,
-)
+def read_csv_file(file_path):
+    """Read a CSV file and return the DataFrame."""
+    return pd.read_csv(file_path, sep=';')
 
-"""# Accuracy"""
+def fill_na_with_minus_one(data):
+    """Fill NaN values in the DataFrame with -1."""
+    return data.fillna(-1)
 
-# Fitting the ANN to the Training set
-model.fit(X_train, y_train ,batch_size = 15, epochs = 5, verbose=0)
+def split_data(data, target_variable, predictors):
+    """Split data into predictors (X) and target variables (y)."""
+    X = data[predictors].values
+    y = data[target_variable].values
+    return X, y
 
-# Generating Predictions on testing data
-Predictions=model.predict(X_test)
+def standardize_data(X, y):
+    """Standardize predictor and target variable data."""
+    predictor_scaler = StandardScaler()
+    target_var_scaler = StandardScaler()
 
-# Scaling the predicted Price data back to original price scale
-Predictions=TargetVarScalerFit.inverse_transform(Predictions)
+    X_standardized = predictor_scaler.fit_transform(X)
+    y_standardized = target_var_scaler.fit_transform(y)
 
-# Scaling the y_test Price data back to original price scale
-y_test_orig=TargetVarScalerFit.inverse_transform(y_test)
+    return X_standardized, y_standardized, predictor_scaler, target_var_scaler
 
-# Scaling the test data back to original scale
-Test_Data=PredictorScalerFit.inverse_transform(X_test)
 
-#print(Predictions)
-#print(y_test_orig)
-#['classificationAccuracy','countingAccuracy','sentimentAnalysisAccuracy','transcriptionAccuracy']
+def train_neural_network(X_train, y_train):
+    """Train a neural network model. Based on the dataset provided, the following values must be adapted."""
+    model = Sequential()
+    # ... (your model architecture)
 
-TestingData=pd.DataFrame(data=Test_Data, columns=Predictors)
+    # Defining the Input layer and FIRST hidden layer, both are same!
+    model.add(Dense(units=256, input_dim=105, kernel_initializer='normal', activation='relu'))
 
-#based on the user input for the variables to predict the accuracy
-TestingData['']=y_test_orig[:,[0]]
-TestingData['Predicted']=Predictions[:,[0]]
-TestingData.head()
+    # Defining the Second layer of the model
+    # after the first layer we don't have to specify input_dim as keras configure it automatically
+    model.add(Dropout(0.15))
+    model.add(Dense(units=128, kernel_initializer='normal', activation='tanh'))
+    model.add(Dropout(0.15))
+    model.add(Dense(units=64, kernel_initializer='normal', activation='tanh'))
+    model.add(Dropout(0.15))
+    model.add(Dense(units=32, kernel_initializer='normal', activation='tanh'))
+    model.add(Dropout(0.15))
+    model.add(Dense(units=16, kernel_initializer='normal', activation='tanh'))
+    model.add(Dropout(0.15))
+    model.add(Dense(units=8, kernel_initializer='normal', activation='tanh'))
 
-# Computing the absolute percent error
-APE=100*(abs(TestingData['classificationAccuracy']-TestingData['PredictedClassificationAccuracy'])/TestingData['classificationAccuracy'])
-TestingData['APE']=APE
+    # The output neuron is a single fully connected node
+    # Since we will be predicting a single number
+    model.add(Dense(4, kernel_initializer='normal'))
 
-print('The Accuracy of ANN model is:', 100-np.mean(APE))
-TestingData.head()
+    # Compiling the model
+    model.compile(loss='mean_squared_error', optimizer='adam')
 
-# Computing the absolute percent error
-APE=100*(abs(TestingData['classificationAccuracy']-TestingData['PredictedClassificationAccuracy'])/TestingData['classificationAccuracy'])
-TestingData['APE']=APE
+    model.fit(X_train, y_train, batch_size=20, epochs=700, verbose=1)
 
-print('The Accuracy of ANN model is:', 100-np.mean(APE))
-TestingData.head()
+    return model
+def save_model(model, file_path='model.h5'):
+    """Save the trained model."""
+    model.save(file_path)
 
-# ask user data to be predicted, split by ; and convert into numpy array
-print("Enter the data to be predicted:")
-data_to_predict = input()
-data_to_predict = np.array(data_to_predict.split(','))
-data_to_predict = data_to_predict.astype(float)
-data_to_predict = data_to_predict.reshape(1, -1)
-data_to_predict = PredictorScalerFit.transform(data_to_predict)
-data_to_predict = norm.fit_transform(data_to_predict)
+def main():
+    # User input for CSV file path
+    csv_file_path = input("Enter the path to the CSV file: ")
 
-y_pred = model.predict(data_to_predict)
-y_pred = TargetVarScaler.inverse_transform(y_pred)
-print(y_pred)
+    # Reading and preparing the dataset
+    data = read_csv_file(csv_file_path)
+    data = fill_na_with_minus_one(data)
+
+    # User input for target variable names
+    target_variable = input("Enter the target variable name(s) separated by commas: ").split(',')
+
+    # User input for predictor variable names
+    predictors = input("Enter the predictor variable name(s) separated by commas: ").split(',')
+
+    X, y = split_data(data, target_variable, predictors)
+    X_std, y_std, predictor_scaler, target_var_scaler = standardize_data(X, y)
+
+    # Splitting the data into training and testing sets
+    X_train, X_test, y_train, y_test = train_test_split(X_std, y_std, test_size=0.3, random_state=42)
+
+    # Normalizing the data
+    norm = Normalizer()
+    X_train = norm.fit_transform(X_train)
+    X_test = norm.fit_transform(X_test)
+    y_train = norm.fit_transform(y_train)
+    y_test = norm.fit_transform(y_test)
+
+    # ... (your training and evaluation logic)
+
+    # Saving the model
+    model = train_neural_network(X_train, y_train)
+    save_model(model)
+
+if __name__ == "__main__":
+    main()

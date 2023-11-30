@@ -5,9 +5,12 @@ import csv
 import json
 
 directoryPathToFilesOfResults = ""
-listPathFileResults = []
+
 pd.options.display.max_rows = 999
 pd.options.display.max_columns = 999
+def read_csv_file(file_path):
+    """Read a CSV file and return the DataFrame."""
+    return pd.read_csv(file_path, sep=';')
 
 def representsInt(s):
     """Function to test if a string is an int"""
@@ -166,35 +169,39 @@ def getMicroTaskSpecificKeyPressCount(userLogDict):
 
     return trialElementFinalResultKeyDetails
 
+def main():
+    # User input for the path files with the results to be processed and applied the task fingerprinting technique
+    listPathFileResults= input("Enter the paths for the files with the results, separated by commas: ").split(',')
 
-for filename in listPathFileResults:
-    # code starts here to fetch each crowd worker results file and then normalize the data towards a single file.
-    df = pd.read_json(filename)
-    now = datetime.now()
-    date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
-    df.to_csv(r'export_dataframe_workshop_' + date_time + '.csv', sep=";", index=False, header=True)
-    file = open(filename, "r", encoding="utf8")
+    for filename in listPathFileResults:
+        # code starts here to fetch each  results file and then normalize the data towards a single file.
+        df = pd.read_json(filename)
+        now = datetime.now()
+        date_time = now.strftime("%m_%d_%Y_%H_%M_%S")
+        df.to_csv(r'export_dataframe_workshop_' + date_time + '.csv', sep=";", index=False, header=True)
+        file = open(filename, "r", encoding="utf8")
 
-    userLogDict = refactorUserLog_UnfilteredJSON_TO_FilteredDict(file.read())
-    clickTaskFingerprintingDict = None
-    clickTaskFingerprintingDict = getMicroTaskSpecificClickDetailsCount(userLogDict)
-    keyTaskFingerprintingDict = None
-    keyTaskFingerprintingDict = getMicroTaskSpecificClickDetailsCount(userLogDict)
+        userLogDict = refactorUserLog_UnfilteredJSON_TO_FilteredDict(file.read())
 
-    with open(r'resultsTaskFingerprintingClickDetails'+datetime+'.csv', 'w', newline='') as outputfile:
-        # saves the results of the click details in a csv file
-        if clickTaskFingerprintingDict is not None:
-            keys = clickTaskFingerprintingDict.keys()
-            dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
-            dict_writer.writeheader()
-            dict_writer.writerows(clickTaskFingerprintingDict)
+        clickTaskFingerprintingDict = getMicroTaskSpecificClickDetailsCount(userLogDict)
+        keyTaskFingerprintingDict = getMicroTaskSpecificClickDetailsCount(userLogDict)
 
-    with open(r'resultsTaskFingerprintingKeyDetails'+datetime+'.csv', 'w', newline='') as outputfile:
-        # saves the results of the key details in a csv file
-        if keyTaskFingerprintingDict is not None:
-            keys = keyTaskFingerprintingDict.keys()
-            dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
-            dict_writer.writeheader()
-            dict_writer.writerows(clickTaskFingerprintingDict)
+        with open(r'resultsTaskFingerprintingClickDetails'+datetime+'.csv', 'w', newline='') as outputfile:
+            # saves the results of the click details in a csv file
+            if clickTaskFingerprintingDict is not None:
+                keys = clickTaskFingerprintingDict.keys()
+                dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
+                dict_writer.writeheader()
+                dict_writer.writerows(clickTaskFingerprintingDict)
+
+        with open(r'resultsTaskFingerprintingKeyDetails'+datetime+'.csv', 'w', newline='') as outputfile:
+            # saves the results of the key details in a csv file
+            if keyTaskFingerprintingDict is not None:
+                keys = keyTaskFingerprintingDict.keys()
+                dict_writer = csv.DictWriter(outputfile, keys, delimiter=";")
+                dict_writer.writeheader()
+                dict_writer.writerows(clickTaskFingerprintingDict)
 
 
+if __name__ == "__main__":
+    main()
