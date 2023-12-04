@@ -9,6 +9,11 @@ If you use our work in your research, please cite the following paper published 
 
 The current implementation includes a module for performing task fingerprinting based on web interactions log and another module to develop a deep learning model based on the task fingerprinting data. Please refer to the paper for more details including deployment conditions.
 
+# Installation
+```pip install cogpersonalization-taskfingerprinting==0.1.0```
+
+NOTE: While using the task fingerprinting technique works fine with the published package, for developing the deep learning model it is best to look at the source code available in this repository, in order to adapt the specific parameters of the model.
+
 ### Contact
 
 Please feel free to contact Dennis Paulino (dpaulino@utad.pt) for further questions.
