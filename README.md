@@ -3,7 +3,7 @@
 Source code for the  framework built for our study on assessing crowd workers behaviors for task design personalization in crowdsourcing.
 If you use our work in your research, please cite the following paper published at Sensors 2023.
 
-> Dennis Paulino, Diogo Guimarães, António Correia, João Barroso and Hugo Paredes. A Model for Cognitive Personalization of Microtask Design. Sensors 2023, 23, 3571. https://doi.org/10.3390/s23073571 
+> Dennis Paulino, Diogo Guimarães, António Correia, José Ribeiro, João Barroso and Hugo Paredes. A Model for Cognitive Personalization of Microtask Design. Sensors 2023, 23, 3571. https://doi.org/10.3390/s23073571 
 
 
 
