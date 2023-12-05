@@ -5,7 +5,7 @@ If you use our work in your research, please cite the following paper published 
 
 > Dennis Paulino, Diogo Guimarães, António Correia, José Ribeiro, João Barroso and Hugo Paredes. A Model for Cognitive Personalization of Microtask Design. Sensors 2023, 23, 3571. https://doi.org/10.3390/s23073571 
 
-#Example of installing and using the package:
+# Example of installing and using the package:
 
     pip install cognitivepersonalizationtaskfingerprinting
     import cptf.cog_personalization_micro_task_fingerprinting as taskfingerprinting
