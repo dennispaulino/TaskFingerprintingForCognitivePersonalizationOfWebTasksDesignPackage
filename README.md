@@ -24,6 +24,11 @@ Example of installing and using the package:
 
 
 
+# Installation
+```pip install cogpersonalization-taskfingerprinting==0.1.0```
+
+NOTE: While using the task fingerprinting technique works fine with the published package, for developing the deep learning model it is best to look at the source code available in this repository, in order to adapt the specific parameters of the model.
+
 ### Contact
 
 Please feel free to contact Dennis Paulino (dpaulino@utad.pt) for further questions.
